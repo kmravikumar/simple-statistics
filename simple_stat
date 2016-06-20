@@ -1,0 +1,28 @@
+#!/bin/bash
+
+file_in=$1
+column=$2
+sep=$3
+
+if [[ $# -lt 1 ]]
+then
+echo "No file name given" 
+echo "syntax:  ./simple_stat [file_name] [column_number] [field-separator]"
+exit 0
+fi
+
+if [[ "$2" == "0" ]]
+then
+column=1
+fi
+
+
+if [[ "$3" == "" ]]
+then
+sep=" "
+fi
+
+
+awk -v c=$column -F"$sep" 'BEGIN {max=-1e16;min=1e16}; {sum = sum+$c; sumsq = sumsq + $c*$c;} $c > max {max = $c}; $c < min {min =$c};  END {printf("column= %4d Sum= %12.6f Avg= %12.6f SD= %12.6f Num_of_lines= %12d max= %12.6f  min= %12.6f \n",c,sum,sum/NR,sqrt(sumsq/NR - (sum*sum/NR/NR)),NR,max,min)}' $file_in
+
+
